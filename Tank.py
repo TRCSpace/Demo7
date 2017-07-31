@@ -4,10 +4,13 @@ class Tank(Component):
   def __init__(self):
     Component.__init__(self)
     
-    # Placeholder paremeters for testing.
-    self.parameters['diameter'] = 77;
-    self.parameters['length'] = 77;
-    self.parameters['wall_thickness'] = 77;
+    # Placeholder parameters for testing.
+    # All diameters in mm.
+    self.parameters['diameter'] = 77
+    # diameter = combustor diameter
+    self.parameters['length'] = 77
+    # length defined by volume of propellant required
+    self.parameters['wall_thickness'] = 77
     
   def Forward(self):
     # This math is all made up...   Take with a large grain of salt...
@@ -17,3 +20,4 @@ class Tank(Component):
     output['mass'] = output['volume'] * self.parameters['fuel_density']
     
     return output;
+
