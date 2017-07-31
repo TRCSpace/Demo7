@@ -13,7 +13,16 @@ class Component:
     pass
   
   def RenderToModel(self):
-    pass
+    # If not overridden, simply render all the subcomponents as a rendering of this component.
+    sub_component_models = [x.RenderToModel() for x in self.subcomponents.values()]
+    
+    #Filter places we don't have models
+    sub_component_models = [x for x in sub_component_models if x is not None]
+    
+    if len(sub_component_models):
+      return reduce((lambda x, y: x + y), sub_component_models)
+    else:
+      return None
   
   
   # Extra "nice to have" features
