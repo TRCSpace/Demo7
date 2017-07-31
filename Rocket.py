@@ -13,7 +13,8 @@ class Rocket(Component):
 
     self.subcomponents['fuel'] = Fuel();
     self.subcomponents['o2'] = O2();
-    self.subcomponents['nozzle'] = Nozzle();
     self.subcomponents['injector'] = Injector();
+    self.subcomponents['nozzle'] = Nozzle();
     self.subcomponents['combustor'] = Combustor();
 
+    
