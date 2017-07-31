@@ -1,4 +1,4 @@
-import Component
+from Component import Component
 
 class Tank(Component):
   def __init__(self):
