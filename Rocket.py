@@ -8,6 +8,7 @@ from O2 import *
 
 # Represents an entire rocket
 class Rocket(Component):
+
   def __init__(self):
     Component.__init__(self)
 
