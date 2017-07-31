@@ -117,14 +117,73 @@ class Nozzle(Component):
         self.Y30 = self.gas.mass_fraction_dict(1e-6)
         self.X30 = self.gas.mole_fraction_dict(1e-6)
 
+class NozzleGeom:
+
+    # Declaring these values as they will be calculated
+    d_comb_max = math.nan
+    r_comb_max = math.nan
+    d_comb = math.nan
+    r_comb = math.nan
+    fillet_comb_conv = math.nan
+    
+    def __init__(self, nodes, thrThermo_x, exitThermo_xx):
+        self.mdot_t = nodes.mdot_t
+    
+        self.A_thr = self.mdot_t * ((thrThermo_x.cp * thrThermo_x.T0) ** 0.5) / (thrThermo_x.mbar_thr * thrThermo_x.P0)
+        self.r_thr = (self.A_thr / math.pi) ** 0.5
+        self.d_thr = self.r_thr * 2
+    
+        # Formula for A_exit/A_thr, obtained from NASA website. A* refers to A_thr
+        # Source: https://www.grc.nasa.gov/www/k-12/airplane/astar.html
+        self.AR_et = (((exitThermo_xx.gm25 + 1) / 2) ** (-((exitThermo_xx.gm25 + 1) / (exitThermo_xx.gm25 - 1) / 2))) \
+                     / exitThermo_xx.M * (1 + exitThermo_xx.M ** 2 * (exitThermo_xx.gm25 - 1) / 2) ** \
+                                         ((exitThermo_xx.gm25 + 1) / (exitThermo_xx.gm25 - 1) / 2)
+    
+        self.A_exit = self.AR_et * self.A_thr
+        self.r_exit = (self.A_exit / math.pi) ** 0.5
+        self.d_exit = self.r_exit * 2
+    
+        self.fillet_div_thr = 1.5 * self.r_thr
+        self.fillet_con_thr = 0.37 * self.r_thr
+        self.con_angle = 45
+        self.div_angle_conical = 15
+        self.AR_et = self.A_exit / self.A_thr
+    
+        # output from previously fitted curve data for 80% bell nozzle graphs (Sutton Pg 70). Polynomial fit already
+        # applied to the curve to obtain these values.
+        # These polynomials have likely been over-fitted. Investigate and determine a better fit/estimate (future work)
+        self.THifit = [-8.20512820512373e-09, 5.59440559433667e-08, 0.000149463869463909,
+                       - 0.0158438228438239, 0.717056410256422, 19.7866666666666]
+        self.THefit = [-1.94871794871787e-07, 3.59440559440548e-05, -0.00258543123543117,
+                       0.0903205128205112, -1.57611655011653, 19.9333333333332]
+    
+        # Actual values of th_i, th_e, based on curve fit:
+        self.theta_i = self.THifit * self.AR_et ** 5 + self.THifit[1] * self.AR_et ** 4 + self.THifit[2] * \
+                                                                                             self.AR_et ** 3 + \
+                       self.THifit[3] * self.AR_et ** 2 + self.THifit[4] * self.AR_et + self.THifit[5]
+        self.theta_e = self.THefit * self.AR_et ** 5 + self.THefit[1] * self.AR_et ** 4 + self.THefit[2] * \
+                                                                                             self.AR_et ** 3 + \
+                       self.THefit[3] * self.AR_et ** 2 + self.THefit[4] * self.AR_et + self.THefit[5]
+    
 
 # Change to make nozzle!!
-def RenderToModel(combLength, combDiam, combThickness):
+def RenderToModel(nozzle_geoms):
+
     # Your code here!
     # converting from metres to mm:
-    combLength = combLength * 1000
-    combDiam = combDiam * 1000
-    combThickness = combThickness * 1000
+
+    # build con and di separately, then conduct union operation
+    # building con section, then di section as follows:
+    # Build outer frustum
+    # Build inner frustum
+    # subtract inner from outer
+
+    # unite con and di to give you condi
+    # add fillets/arcs if possible
+
+'''
+    con_nozzle = cylinder(r1= nozzle_geoms.d_comb/2, r2= nozzle_geoms.r_thr, h= 100)
+    con_nozzle = translate([0, 0, -combustor.L_tot_combustor])(con_nozzle)
 
     combustor = cylinder(r=combDiam/2, h=combLength)
     combustor -= translate([0, 0, -1])(cylinder(r=combDiam/2, h=combLength+2))
@@ -132,19 +191,16 @@ def RenderToModel(combLength, combDiam, combThickness):
 
     return combustor
 
-
-def print_r(the_object):
-    print("CLASS: ", the_object.__class__.__name__, " (BASE CLASS: ", the_object.__class__.__bases__, ")")
-    pprint(vars(the_object))
-
+'''
 
 # Start of script:
 
 combustor = Combustor(Nodes.nodes)
 nozzle = Nozzle(Nodes.nodes, combustor)
 
-
+'''
 if __name__ == '__main__':
     combCAD = RenderToModel(combustor.L_tot_combustor, combustor.d_comb, 0.02)
     SEGMENTS = 48
     scad_render_to_file(combCAD, file_header='$fn = %s;' % SEGMENTS, include_orig_code=True)
+'''
