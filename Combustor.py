@@ -50,7 +50,7 @@ class Combustor(Component):
         # Placeholder variables - will be operated on by other functions:
         nodes.T = nodes.T0
         self.P = self.P0
-        self.M = 0
+        self.M = 0.2
         self.v = self.M * self.c0
 
         self.d_inj_hole = 1e-3
@@ -264,11 +264,21 @@ class Combustor(Component):
         self.t_tot = self.t_ph + self.t_vap + self.t_burn
         self.L_comb = self.t_tot * self.u_avg
 
+        self.L_tot_combustor = self.L_comb + self.L_sbu
 
-def RenderToModel():
+        self.A_comb = self.mdot_t / (self.rho_g * self.v)
+        self.d_comb = math.sqrt(4 * self.A_comb / math.pi)
+
+
+def RenderToModel(combLength, combDiam, combThickness):
     # Your code here!
-    combustor = cylinder(r=100, h=100)
-    combustor -= translate([0,0,-1])(cylinder(r=80, h=102))
+    # converting from metres to mm:
+    combLength = combLength * 1000
+    combDiam = combDiam * 1000
+    combThickness = combThickness * 1000
+
+    combustor = cylinder(r=combDiam/2, h=combLength)
+    combustor -= translate([0, 0, -1])(cylinder(r=combDiam/2, h=combLength+2))
     combustor = translate([0, 0, -100])(combustor)
 
     return combustor
@@ -284,6 +294,6 @@ def print_r(the_object):
 combustor = Combustor(Nodes.nodes)
 
 if __name__ == '__main__':
-    combCAD = RenderToModel()
+    combCAD = RenderToModel(combustor.L_tot_combustor, combustor.d_comb, 0.02)
     SEGMENTS = 48
     scad_render_to_file(combCAD, file_header='$fn = %s;' % SEGMENTS, include_orig_code=True)
