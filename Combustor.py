@@ -37,21 +37,21 @@ class Combustor(Component):
         self.gamma = self.gas.cp_mass / self.gas.cv_mass
         self.cp = self.gas.cp_mass
         self.mu = self.gas.viscosity
-        nodes.T0 = self.gas.T
+        self.T0 = self.gas.T
         self.P0 = self.gas.P
         self.Mr = self.gas.mean_molecular_weight
         self.rho = self.gas.density_mass
-        self.c0 = math.sqrt(self.gamma * 8314 * nodes.T0 / self.Mr)
+        self.c0 = math.sqrt(self.gamma * 8314 * self.T0 / self.Mr)
         self.k_th = self.gas.thermal_conductivity
         self.Pr = self.cp * self.mu / self.k_th
         self.Y = self.gas.mass_fraction_dict(1e-6)
         self.X = self.gas.mole_fraction_dict(1e-6)
 
         # Placeholder variables - will be operated on by other functions:
-        nodes.T = nodes.T0
         self.P = self.P0
         self.M = 0.2
         self.v = self.M * self.c0
+        self.T = 0.91 * self.T0
 
         self.d_inj_hole = 1e-3
         self.rho_amb = 2.5  # estimated value for combustion gases
@@ -200,7 +200,7 @@ class Combustor(Component):
                         cp.CoolProp.PropsSI('H','P',self.P_c,'Q',0,nodes.fuel))
         nodes.T_i = nodes.T_prop  # FUEL temperature, NOT flame temperature
 
-        nodes.T_af = nodes.T0
+        nodes.T_af = self.T0
         self.k_g = self.k_th
         self.rho_g = self.rho
         self.mu_g = self.mu
@@ -253,7 +253,6 @@ class Combustor(Component):
             self.D = math.sqrt(self.Dsq)
             # Counter to monitor vaporisation time
             self.t_vap = self.t_vap + self.dt
-
 
         # Calculate Burn Time:
         self.beta0pr = 4 * self.k_g * (nodes.T_af - nodes.T_b) / (self.rho_f * self.h_fg * self.C2)
