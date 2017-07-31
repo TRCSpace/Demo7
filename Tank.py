@@ -1,4 +1,4 @@
-import Tank
+import Component
 
-class Tank:
+class Tank(Component):
   pass

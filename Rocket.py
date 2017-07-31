@@ -1,2 +1,4 @@
-class Rocket:
+import Component
+
+class Rocket(Component):
   pass

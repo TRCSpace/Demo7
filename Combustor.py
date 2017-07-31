@@ -1,2 +1,4 @@
-class Tank:
+import Component
+
+class Combustor(Component):
   pass
