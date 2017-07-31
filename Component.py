@@ -31,7 +31,7 @@ class Component:
   def __repr__(self):
      def indent(text, amount, ch=' '):
        padding = amount * ch
-       return ''.join(padding+line for line in text.splitlines(True))
+       return ''.join(padding + line for line in text.splitlines(True))
 
      def render(i):
        return indent('\n'.join([k + ': ' + repr(v) for k,v in i.iteritems()]), 2)
