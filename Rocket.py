@@ -6,6 +6,6 @@ from Nozzle import *
 from O2 import *
 
 
-
+# Represents an entire rocket
 class Rocket(Component):
   pass
