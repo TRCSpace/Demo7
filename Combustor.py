@@ -18,8 +18,8 @@ SEGMENTS = 48
 def RenderToModel():
     # Your code here!
     combustor = cylinder(r=100, h=100)
-    combustor -= cylinder(r=80, h=101)
-    # find a way to translate cylinder
+    combustor -= translate([0,0,-1])(cylinder(r=80, h=102))
+    combustor = translate([0, 0, -100])(combustor)
 
     return combustor
 
