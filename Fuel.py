@@ -1,2 +1,2 @@
-class Tank:
+class Fuel(Tank):
   pass
