@@ -279,7 +279,7 @@ def RenderToModel(combLength, combDiam, combThickness):
 
     combustor = cylinder(r=combDiam/2, h=combLength)
     combustor -= translate([0, 0, -1])(cylinder(r=combDiam/2, h=combLength+2))
-    combustor = translate([0, 0, -100])(combustor)
+    combustor = translate([0, 0, -combLength])(combustor)
 
     return combustor
 
