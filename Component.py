@@ -5,12 +5,12 @@ class Component:
     # Stores the current value of all design parameters, and estimates of all calculated values.
     self.parameters = {};
 
-  def Forward():
+  def Forward(self):
     pass
   
-  def Backward():
+  def Backward(self):
     pass
   
-  def RenderToModel():
+  def RenderToModel(self):
     pass
   
